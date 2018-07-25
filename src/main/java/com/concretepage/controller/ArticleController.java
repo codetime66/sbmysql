@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.concretepage.entity.Article;
+import com.concretepage.entity.Person;
+import com.concretepage.entity.Shirt;
 import com.concretepage.service.IArticleSLService;
 import com.concretepage.service.IArticleService;
+import com.concretepage.service.IPersonService;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("user")
@@ -27,6 +31,9 @@ public class ArticleController {
         
 	@Autowired
 	private IArticleSLService articleSLService;
+        
+        @Autowired
+        private IPersonService personService;
         
 	@GetMapping("article/{id}")
 	public ResponseEntity<Article> getArticleById(@PathVariable("id") Integer id) {
@@ -59,4 +66,29 @@ public class ArticleController {
 		articleService.deleteArticle(id);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}	
+        
+	@GetMapping("persons")
+	public ResponseEntity<List<Person>> getAllPersons() {
+		List<Person> list = personService.getAllPersons();
+		return new ResponseEntity<List<Person>>(list, HttpStatus.OK);
+	}        
+        
+	@GetMapping("personshirts")
+	public ResponseEntity<List<Person>> getPersonShirst() {
+		//List<Person> list = personService.getPersonShirts();
+                List<Person> list = new ArrayList();
+                
+                
+                List<?> list_ = personService.getPersonShirts();
+		for(int i=0; i<list_.size(); i++) {
+			Object[] row = (Object[]) list_.get(i);
+			Person person = (Person)row[0];
+			Shirt shirt = (Shirt)row[1];
+			System.out.println("CompId:"+person.getId()+", CompName:"+ person.getName()+
+					   ", EmpId:"+ shirt.getId()+", EmpName:"+ shirt.getColor());
+		}		                
+                
+                
+		return new ResponseEntity<List<Person>>(list, HttpStatus.OK);
+	}                
 } 
